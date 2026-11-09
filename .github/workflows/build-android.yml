@@ -36,9 +36,13 @@ jobs:
           VITE_API_ID: ${{ vars.MYAFGRAM_API_ID }}
           VITE_API_HASH: ${{ vars.MYAFGRAM_API_HASH }}
       - name: Install Capacitor tooling
-        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/assets@3
+        run: |
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.devDependencies={...p.devDependencies,'@capacitor/core':'^7.0.0','@capacitor/cli':'^7.0.0','@capacitor/android':'^7.0.0','@capacitor/assets':'^3.0.0'}; fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n')"
+          pnpm install --no-frozen-lockfile
       - name: Add Android platform
         run: npx cap add android
+      - name: Install image conversion tools
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
       - name: Generate Android app icons from the supplied artwork
         run: |
           mkdir -p resources
