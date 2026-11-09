@@ -54,17 +54,22 @@ jobs:
           source = ImageOps.fit(source.convert("RGB"), (1024, 1024), method=Image.Resampling.LANCZOS)
           source.save("resources/icon.png", format="PNG", optimize=True)
           for density, pixels in [("mdpi",48),("hdpi",72),("xhdpi",96),("xxhdpi",144),("xxxhdpi",192)]:
-              folder = f"android/app/src/main/res/mipmap-{density}"
               import os
+              folder = f"android/app/src/main/res/mipmap-{density}"
               os.makedirs(folder, exist_ok=True)
               icon = source.resize((pixels,pixels), Image.Resampling.LANCZOS)
               icon.save(f"{folder}/ic_launcher.png", format="PNG", optimize=True)
               icon.save(f"{folder}/ic_launcher_round.png", format="PNG", optimize=True)
           PY
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
       - name: Install Android SDK packages
-        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort | tail -n 1)"
+          fi
+          echo "Using sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
       - name: Sync web app into Android project
         run: npx cap sync android
       - name: Build debug APK
