@@ -33,8 +33,8 @@ jobs:
       - name: Build web app
         run: pnpm exec vite build
         env:
-          VITE_API_ID: ${{ vars.MYAFGRAM_API_ID }}
-          VITE_API_HASH: ${{ vars.MYAFGRAM_API_HASH }}
+          VITE_API_ID: ${{ vars.MYAFGRAM_API_ID || '2496' }}
+          VITE_API_HASH: ${{ vars.MYAFGRAM_API_HASH || '8da85b0d5bfe62527e5b244c209159c3' }}
       - name: Install Capacitor tooling
         run: |
           node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.devDependencies={...p.devDependencies,'@capacitor/core':'^7.0.0','@capacitor/cli':'^7.0.0','@capacitor/android':'^7.0.0','@capacitor/assets':undefined}; fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n')"
