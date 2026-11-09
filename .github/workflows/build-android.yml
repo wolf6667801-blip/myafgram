@@ -37,7 +37,7 @@ jobs:
           VITE_API_HASH: ${{ vars.MYAFGRAM_API_HASH }}
       - name: Install Capacitor tooling
         run: |
-          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.devDependencies={...p.devDependencies,'@capacitor/core':'^7.0.0','@capacitor/cli':'^7.0.0','@capacitor/android':'^7.0.0','@capacitor/assets':'^3.0.0'}; fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n')"
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.devDependencies={...p.devDependencies,'@capacitor/core':'^7.0.0','@capacitor/cli':'^7.0.0','@capacitor/android':'^7.0.0','@capacitor/assets':undefined}; fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n')"
           pnpm install --no-frozen-lockfile
       - name: Add Android platform
         run: npx cap add android
@@ -47,7 +47,14 @@ jobs:
         run: |
           mkdir -p resources
           convert public/assets/img/myafgram-icon.jpg -resize 1024x1024^ -gravity center -extent 1024x1024 resources/icon.png
-          npx capacitor-assets generate --android
+          for spec in 'mdpi 48' 'hdpi 72' 'xhdpi 96' 'xxhdpi 144' 'xxxhdpi 192'; do
+            set -- $spec
+            density=$1
+            pixels=$2
+            mkdir -p "android/app/src/main/res/mipmap-$density"
+            convert public/assets/img/myafgram-icon.jpg -resize "${pixels}x${pixels}^" -gravity center -extent "${pixels}x${pixels}" "android/app/src/main/res/mipmap-$density/ic_launcher.png"
+            cp "android/app/src/main/res/mipmap-$density/ic_launcher.png" "android/app/src/main/res/mipmap-$density/ic_launcher_round.png"
+          done
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       - name: Sync web app into Android project
