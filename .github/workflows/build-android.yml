@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'capacitor.config.ts'
+      - 'capacitor.config.json'
       - 'index.html'
       - 'public/**'
       - 'src/**'
