@@ -1,0 +1,23 @@
+name: Import Telegram Web K
+on:
+  push:
+    paths:
+      - ".github/workflows/import-upstream.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Import upstream source
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --no-tags --single-branch --branch master https://github.com/morethanwords/tweb.git upstream
+          cd upstream
+          git remote add destination "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force destination HEAD:refs/heads/main
