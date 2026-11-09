@@ -8,7 +8,7 @@
   "icons": [
     {
       "src": "assets/img/myafgram-icon.jpg",
-      "sizes": "192x192",
+      "sizes": "any",
       "type": "image/jpeg",
       "purpose": "any"
     }
