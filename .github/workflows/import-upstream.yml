@@ -21,6 +21,7 @@ jobs:
           set -euo pipefail
           cp .github/workflows/import-upstream.yml /tmp/import-upstream.yml
           git clone --no-tags --single-branch --branch master https://github.com/morethanwords/tweb.git upstream
+          rm -rf upstream/.github/workflows
           mkdir -p upstream/.github/workflows
           cp /tmp/import-upstream.yml upstream/.github/workflows/import-upstream.yml
           cd upstream
