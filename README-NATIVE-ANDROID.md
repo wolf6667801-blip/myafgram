@@ -20,7 +20,7 @@ https://core.telegram.org/api/obtaining_api_id
 В настройках GitHub репозитория добавьте **Repository variables**:
 
 - `MYAFGRAM_API_ID` — числовой API ID.
-- `MYAFGRAM_API_HASH` — API hash.
+- `MYAFGRAM_API_HASH` — API hash; add this under **Repository secrets** (not Variables).
 
 Workflow завершится с понятной ошибкой, если эти переменные не заданы.
 
