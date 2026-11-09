@@ -24,7 +24,7 @@ jobs:
       - name: Validate Telegram API configuration
         env:
           API_ID: ${{ vars.MYAFGRAM_API_ID }}
-          API_HASH: ${{ vars.MYAFGRAM_API_HASH }}
+          API_HASH: ${{ secrets.MYAFGRAM_API_HASH }}
         run: |
           if [ -z "$API_ID" ] || [ -z "$API_HASH" ]; then
             echo "::error::Add MYAFGRAM_API_ID and MYAFGRAM_API_HASH as repository Variables before building."
@@ -59,7 +59,7 @@ jobs:
       - name: Configure Myafgram application
         env:
           API_ID: ${{ vars.MYAFGRAM_API_ID }}
-          API_HASH: ${{ vars.MYAFGRAM_API_HASH }}
+          API_HASH: ${{ secrets.MYAFGRAM_API_HASH }}
         run: |
           python3 - <<'PY'
           import json, os, pathlib, re
