@@ -42,19 +42,25 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
       - name: Install image conversion tools
-        run: sudo apt-get update && sudo apt-get install -y imagemagick
-      - name: Generate Android app icons from the supplied artwork
+        run: python3 -m pip install --user --break-system-packages Pillow
+      - name: Repair and generate Android app icons from the supplied artwork
         run: |
           mkdir -p resources
-          convert public/assets/img/myafgram-icon.jpg -resize 1024x1024^ -gravity center -extent 1024x1024 resources/icon.png
-          for spec in 'mdpi 48' 'hdpi 72' 'xhdpi 96' 'xxhdpi 144' 'xxxhdpi 192'; do
-            set -- $spec
-            density=$1
-            pixels=$2
-            mkdir -p "android/app/src/main/res/mipmap-$density"
-            convert public/assets/img/myafgram-icon.jpg -resize "${pixels}x${pixels}^" -gravity center -extent "${pixels}x${pixels}" "android/app/src/main/res/mipmap-$density/ic_launcher.png"
-            cp "android/app/src/main/res/mipmap-$density/ic_launcher.png" "android/app/src/main/res/mipmap-$density/ic_launcher_round.png"
-          done
+          python3 - <<'PY'
+          from PIL import Image, ImageFile, ImageOps
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+          source = Image.open("public/assets/img/myafgram-icon.jpg")
+          source.load()
+          source = ImageOps.fit(source.convert("RGB"), (1024, 1024), method=Image.Resampling.LANCZOS)
+          source.save("resources/icon.png", format="PNG", optimize=True)
+          for density, pixels in [("mdpi",48),("hdpi",72),("xhdpi",96),("xxhdpi",144),("xxxhdpi",192)]:
+              folder = f"android/app/src/main/res/mipmap-{density}"
+              import os
+              os.makedirs(folder, exist_ok=True)
+              icon = source.resize((pixels,pixels), Image.Resampling.LANCZOS)
+              icon.save(f"{folder}/ic_launcher.png", format="PNG", optimize=True)
+              icon.save(f"{folder}/ic_launcher_round.png", format="PNG", optimize=True)
+          PY
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       - name: Sync web app into Android project
