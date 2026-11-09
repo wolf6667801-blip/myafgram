@@ -63,6 +63,11 @@ jobs:
           PY
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
       - name: Sync web app into Android project
         run: npx cap sync android
       - name: Build debug APK
