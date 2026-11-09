@@ -1,0 +1,8 @@
+{
+  "appId": "app.myafgram.messenger",
+  "appName": "Мяфграм",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false
+  }
+}
